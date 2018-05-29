@@ -1,22 +1,23 @@
-from numpy import loadtxt
+from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
 import pandas as pd
 
-def load_data():
+print('predict circuit based on year and round')
 
-    data = pd.read_csv('data/races.csv')
-    np_data = data.values
+data = pd.read_csv('data/races.csv')
+feature_cols = ['year', 'round']
 
-    training = np_data[:-1]
-    last = np_data[-1:]
+# X = data.loc[:data.last_valid_index() - 1, feature_cols]
+X = data.loc[:, feature_cols]
+y = data.name
+# print(X)
+# print(y)
 
-    print(data.shape)
+classifier = DecisionTreeClassifier()
+classifier.fit(X, y)
 
-
-
-
-
-
-
-print('load data...')
-load_data()
-
+d = {'year': [2019, 2019, 2019, 2019, 2019],
+     'round': [1, 2, 3, 4, 5]}
+df = pd.DataFrame(data=d)
+prediction = classifier.predict(df)
+print(prediction)
