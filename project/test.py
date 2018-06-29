@@ -1,48 +1,30 @@
-from sklearn.preprocessing import LabelEncoder
-from sklearn.tree import DecisionTreeClassifier
+import numpy as np
 import pandas as pd
-
-print('predict circuit based on year and round')
-
-df = pd.read_csv('data/races.csv')
-feature_cols = ['year', 'date']
-
-le = LabelEncoder()
-le.fit(df.date.unique())
-df.date = le.transform(df.date)
-
-# X = df.loc[:df.last_valid_index() - 1, feature_cols]
-X = df.loc[:, feature_cols]
-y = df.name
-# print(X)
-# print(y)
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
 
 
+features = pd.read_csv('data/results.csv')
+# features = pd.get_dummies(features)
+# features = features.head(5)
+print(features)
 
+
+features = features.drop('fastestLapTime', axis = 1)
+features = features.drop('time', axis = 1)
+labels = np.array(features['position'])
+# feature_list = list(features.columns)
+# features = np.array(features)
+print(features)
 
 
 
+train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size = 0.25, random_state = 42)
 
-# le.fit(['one', 'two', 'two', 'three'])
-# print(le.classes_)
-# print(le.transform(['one', 'two', 'two', 'three']))
-# print(le.inverse_transform(le.transform(['one', 'two', 'two', 'three'])))
+clf = RandomForestClassifier(n_jobs=2, random_state=0)
+clf.fit(train_features, train_labels)
 
-print(X)
-
-
-inv = le.inverse_transform([1, 2, 3, 4, 5])
-print(inv)
-
-
-
-
-
-classifier = DecisionTreeClassifier()
-classifier.fit(X, y)
-
-d = {'year': [2018, 2018, 2018, 2018, 2018],
-     'date': [1, 2, 3, 4, 5]}
-df = pd.DataFrame(data=d)
-prediction = classifier.predict(df)
-print(prediction)
+# predictions = clf.predict(test_features)
+# print(predictions)
+# errors = abs(predictions - test_labels)
+# print(errors)
