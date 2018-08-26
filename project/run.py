@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
@@ -8,18 +7,25 @@ from xgboost import XGBClassifier
 # Load the results dataset into a dataframe.
 df = pd.read_csv('data/results.csv')
 
-# Extract the results from the 2017 season.
-df_2017 = df[(df.raceId >= 969) & (df.raceId <= 988)]
+# Extract the results from 2014-2017.
+df = df[(df.raceId >= 900) & (df.raceId <= 988)]
 
-# Train with the first 19 races, test with the last race.
-train = df_2017[:-20]
-test = df_2017[-20:]
+# Train with all races except the 5 last (remember: every race has 20 drivers).
+train = df[:-100]
+
+# Test with the 5 last races.
+test = df[-100:]
 
 # Try to predict the position based on a few other features.
 y_train = train.positionOrder
 y_test = test.positionOrder
 
-columns = ['raceId', 'driverId', 'grid', 'rank']
+# driverId - who the driver is.
+# rank - where the driver is in the championship standings.
+# grid - the starting position.
+# constructorId - which team the driver is racing for.
+
+columns = ['driverId', 'constructorId', 'grid', 'rank']
 X_train = train[columns]
 X_test = test[columns]
 
